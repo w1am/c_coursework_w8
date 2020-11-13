@@ -25,17 +25,16 @@ int randNumber(int limit) {
   return result;
 }
 
-struct dashboard {
+struct Die {
   int face;
   int occurrence;
 };
 
 int main(void) {
-  int faces = 0;
-  int throws = 0;
+  int faces, throws, total = 0;
 
   printf("Enter number of faces: ");
-  scanf("%i", &faces);
+  scanf("%d", &faces);
 
   while (faces < 1 || faces > 25) {
     printf("\nNumber of faces should be between 1 and 25. Please re-enter: ");
@@ -49,28 +48,27 @@ int main(void) {
     printf("\nNumber of throws should be between 1 and 500. Please re-enter: ");
     scanf("%i", &throws);
   };
-
-  struct dashboard dash[throws];
+  
+  struct Die *dash = malloc(sizeof(struct dashboard) + throws);
 
   for (int i=1; i<=faces; i++) dash[i].occurrence = 0;
 
-  printf("Generating throws: \n");
+  printf("\nGenerating throws: \n");
   for (int i=1; i<=throws; i++) {
-    int random_number;
-    random_number = randNumber(faces);
-    printf("%d\n", random_number);
+    total = randNumber(faces);
+    printf("%d\n", total);
 
-    if (dash[random_number].face > 0) {
-      dash[random_number].occurrence += 1;
+    if (dash[total].face) {
+      dash[total].occurrence += 1;
     } else {
-      dash[random_number].face = random_number;
-      dash[random_number].occurrence = 1;
+      dash[total].face = total;
+      dash[total].occurrence = 1;
     }
   };
 
-  for (int i=1; i<=faces; i++) {
+  printf("\n");
+  for (int i=1; i<=faces; i++)
     printf("Occurences of %d: (%d) %.2f%%\n", i, dash[i].occurrence, dash[i].occurrence/(float)throws*100);
-  };
 
   return 0;
 }
