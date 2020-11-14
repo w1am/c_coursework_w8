@@ -49,7 +49,7 @@ int main(void) {
     scanf("%i", &throws);
   };
   
-  struct Die *dash = malloc(sizeof(struct dashboard) + throws);
+  struct Die *dash = malloc(sizeof(struct Die) * throws);
 
   for (int i=1; i<=faces; i++) dash[i].occurrence = 0;
 
