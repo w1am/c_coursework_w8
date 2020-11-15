@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include <stdlib.h>
+#include <stdlib.h> // Malloc
 #include <string.h>
 #include <unistd.h>
 #include <utime.h>
@@ -22,10 +22,12 @@ int randNumber(int limit) {
 	result = rand() % limit + 1;
   usleep(98765);
 
+  printf("%d\n", result);
+
   return result;
 }
 
-struct Die {
+struct Dice {
   int face;
   int occurrence;
 };
@@ -49,26 +51,22 @@ int main(void) {
     scanf("%i", &throws);
   };
   
-  struct Die *dash = malloc(sizeof(struct Die) * throws);
+  struct Dice *dice = malloc(throws * sizeof(struct Dice));
 
-  for (int i=1; i<=faces; i++) dash[i].occurrence = 0;
+  for (int i=1; i<=faces; i++) dice[i].occurrence = 0;
 
   printf("\nGenerating throws: \n");
   for (int i=1; i<=throws; i++) {
     total = randNumber(faces);
-    printf("%d\n", total);
-
-    if (dash[total].face) {
-      dash[total].occurrence += 1;
-    } else {
-      dash[total].face = total;
-      dash[total].occurrence = 1;
-    }
+    dice[total].face = total;
+    dice[total].face ? dice[total].occurrence += 1 : (dice[total].occurrence = 1);
   };
 
-  printf("\n");
+  printf("\nFace \t Count \t Occurence \n");
   for (int i=1; i<=faces; i++)
-    printf("Occurences of %d: (%d) %.2f%%\n", i, dash[i].occurrence, dash[i].occurrence/(float)throws*100);
+    printf("%d \t %d \t %.2f%%\n", i, dice[i].occurrence, dice[i].occurrence/(float)throws*100);
+
+  free(dice);
 
   return 0;
 }
