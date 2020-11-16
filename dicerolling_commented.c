@@ -45,7 +45,7 @@ int main(void) {
   //Prompt the User the how many faces question.
   printf("Enter number of faces: ");
   //Looking after his answer. must be an Integer.
-  scanf("%d", &faces);
+  scanf("%i", &faces);
 
   //Here , we are veryfying that the user input is respecting the rules. the dice must be more than 1 and less than 25 faces.
   //the loop will go on until the 2 conditions mentioned before are met.
