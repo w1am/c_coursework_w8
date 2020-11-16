@@ -1,7 +1,7 @@
 //Calling library for the main functions.
 #include <stdio.h>
 //Calling library for the random function.
-#include <stdlib.h>
+#include <stdlib.h> // Malloc
 //For Usleep function
 #include <unistd.h>
 //For time functions
@@ -9,70 +9,72 @@
 
 //Function for randomizing a number.
 int randNumber(int limit) {
-    //Creating a structure.
+  //Creating a structure.
   struct timeb timer_msec;
   //Declaring variables.
   int result;
   long long int timestamp_msec; /* timestamp in millisecond. */
   if (!ftime(&timer_msec)) {
-      //ticking start
     timestamp_msec = ((long long int) timer_msec.time) * 1000ll +
                         (long long int) timer_msec.millitm;
   } else {
     timestamp_msec = -1;
   }
-  //sorting a random number between 1 and limit (no of faces)
+   //sorting a random number between 1 and limit (no of faces)
 	srand ( timestamp_msec );
 	/* result = rand() % limit; */
 	result = rand() % limit + 1;
-	//sleep for 1 sec
   usleep(98765);
+  //printing the value for each random number
+  printf("%d\n", result);
 
   return result;
 }
 
 //Here we create a structure. it will contain the face number we check and the occurence of each of them.
-struct Die {
-  int face,occurrence;
+struct Dice {
+  int face;
+  int occurrence;
 };
 
 //Calling the main function
 int main(void) {
-    //Declaring the variables we are going to use for the rolls and for setting the simulation rules.
+  //Declaring the variables we are going to use for the rolls and for setting the simulation rules.
   int faces, throws, total = 0;
   
-    //Prompt the User the how many faces question.
+  //Prompt the User the how many faces question.
   printf("Enter number of faces: ");
-    //Looking after his answer. must be an Integer.
+  //Looking after his answer. must be an Integer.
   scanf("%d", &faces);
 
-    //Here , we are veryfying that the user input is respecting the rules. the dice must be more than 1 and less than 25 faces.
-    //the loop will go on until the 2 conditions mentioned before are met.
-  while (faces <= 1 || faces >= 25) {
-      //Tell the user that his answer is not good . Re-ask him another value.
+  //Here , we are veryfying that the user input is respecting the rules. the dice must be more than 1 and less than 25 faces.
+  //the loop will go on until the 2 conditions mentioned before are met.
+  while (faces < 1 || faces > 25) {
+    //Tell the user that his answer is not good . Re-ask him another value.
     printf("\nNumber of faces should be between 1 and 25. Please re-enter: ");
     scanf("%i", &faces);
   };
   //This Statement show the user that his input have been correctly understood and will be used.
     printf("A %d faces dice will be used.\n", faces);
-    
-    //Same
+
+  //Same
   printf("Enter number of throws: ");
   scanf("%i", &throws);
 
-  while (throws <= 1 || throws >= 500) {
-      //Same
+  while (throws < 1 || throws > 500) {
+    //Same
     printf("\nNumber of throws should be between 1 and 500. Please re-enter: ");
     scanf("%i", &throws);
   };
-  //This Statement show the user that his input have been correctly understood and will be used.
-    printf("%d throws are expected!\n",throws);
-    
-  //Struct in Die a new variable 'dash' .malloc for creating a dynamic array returning a pointer of the allocated value. 
-  struct Die *dash = malloc(sizeof(struct Die) + throws);
+  //Same
+  printf("Enter number of throws: ");
+  scanf("%i", &throws);
   
+  //Struct .malloc for creating a dynamic array returning a pointer of the allocated value. 
+  struct Dice *dice = malloc(throws * sizeof(struct Dice));
+
   //For loop that will create an empty array the size of the number of faces the dice is.
-  for (int i=1; i<=faces; i++) dash[i].occurrence = 0;
+  for (int i=1; i<=faces; i++) dice[i].occurrence = 0;
   
   //Informing the user the throws are generated.
   printf("\nGenerating throws: \n");
@@ -82,24 +84,44 @@ int main(void) {
     //First the sort a random number . To make sure the random number is between 1 and the number of faces chosen,
     //the function take 1 argument , here faces . which will be assign to 'limit' in the function.
     total = randNumber(faces);
-    //sorting the number for each time it loop.
-    printf("%d\n", total);
 
+    dice[total].face = total;
     //Check if this position of the array(corresponding to a face)not null.
-    if (dash[total].face) {
-        //Occurence + 1
-      dash[total].occurrence += 1;
-    } else {
-        //If face at position Total is null . face = total which is the rolled number and occurence + 1.
-      dash[total].face = total;
-      dash[total].occurrence = 1;
-    }
+    dice[total].face ? dice[total].occurrence += 1 : (dice[total].occurrence = 1);
   };
-
-  printf("\n");
-  //For loop that will print the occurence of each face . i++ to print each position in the array.
+  
+   //For loop that will print the occurence of each face . i++ to print each position in the array.
+  printf("\nFace \t Count \t Occurence \n");
   for (int i=1; i<=faces; i++)
-    printf("Occurences of %d: (%d) %.2f%%\n", i, dash[i].occurrence, dash[i].occurrence/(float)throws*100);
+    printf("%d \t %d \t %.2f%%\n", i, dice[i].occurrence, dice[i].occurrence/(float)throws*100);
+	
+  //Declaring variable for mean median and mode.
+  int mean=0,median=0,middle=throws/2+1;
+ //looping what multiply each count with the face value and sum everything together.
+  for (int i=1; i<=faces; i++)
+    mean += dice[i].occurrence*i;
+	
+  int i=0;
+  //check for the position of the median value in the array.
+  while (median < middle) 
+  {
+    median += dice[i].occurrence;
+    ++i;
+  };
+ 
+  int higher = 0;
+ //loop to find the higher count which is the mode.
+  for(int i=1;i<faces;i++) {
+    if(dice[i].occurrence > dice[higher].occurrence) {
+      higher = dice[i].face;
+    }
+  }
+  //printing the results.
+  printf("Mean: %.2f\nMedian: %d\nMode: %d", mean/(float)throws, dice[i-1].face, higher);
+  
+    
+  //delete the effect of 'malloc' we used before because we dont need to allocated memory anymore.
+  free(dice);
 
   return 0;
 }
