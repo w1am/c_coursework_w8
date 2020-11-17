@@ -14,16 +14,19 @@ int randNumber(int limit) {
   //Declaring variables.
   int result;
   long long int timestamp_msec; /* timestamp in millisecond. */
+  //fetching the system time.
   if (!ftime(&timer_msec)) {
     timestamp_msec = ((long long int) timer_msec.time) * 1000ll +
                         (long long int) timer_msec.millitm;
   } else {
     timestamp_msec = -1;
   }
-   //sorting a random number between 1 and limit (no of faces)
+   //srand will sort new number for each program call.We use the system time because it is never the same in miliseconds.
+   //so the seed of srand() is always different and the number are never the same.
 	srand ( timestamp_msec );
-	/* result = rand() % limit; */
+	//sorting a random number between 1 and limit (no of faces) . 
 	result = rand() % limit + 1;
+	//sleep program for some millisecond just to make it neat.
   usleep(98765);
   //printing the value for each random number
   printf("%d\n", result);
@@ -31,7 +34,7 @@ int randNumber(int limit) {
   return result;
 }
 
-//Here we create a structure. it will contain the face number we check and the occurence of each of them.
+//Here we create a structure. it will contain the face value  and the occurence of each of them.
 struct Dice {
   int face;
   int occurrence;
@@ -49,7 +52,7 @@ int main(void) {
 
   //Here , we are veryfying that the user input is respecting the rules. the dice must be more than 1 and less than 25 faces.
   //the loop will go on until the 2 conditions mentioned before are met.
-  while (faces < 1 || faces > 25) {
+  while (faces <= 1 || faces >= 25) {
     //Tell the user that his answer is not good . Re-ask him another value.
     printf("\nNumber of faces should be between 1 and 25. Please re-enter: ");
     scanf("%i", &faces);
@@ -61,7 +64,7 @@ int main(void) {
   printf("Enter number of throws: ");
   scanf("%i", &throws);
 
-  while (throws < 1 || throws > 500) {
+  while (throws <= 1 || throws >= 500) {
     //Same
     printf("\nNumber of throws should be between 1 and 500. Please re-enter: ");
     scanf("%i", &throws);
@@ -69,7 +72,8 @@ int main(void) {
   //This Statement show the user that his input have been correctly understood and will be used.
   printf("%d throws are expected!",throws);
   
-  //Struct .malloc for creating a dynamic array returning a pointer of the allocated value. 
+  //in Dice Structure , we allocate memory for dice , size of the throws * structures. 
+  //it is use for a dynamic array size which will contain our occurences per face .
   struct Dice *dice = malloc(throws * sizeof(struct Dice));
 
   //For loop that will create an empty array the size of the number of faces the dice is.
@@ -83,13 +87,15 @@ int main(void) {
     //First the sort a random number . To make sure the random number is between 1 and the number of faces chosen,
     //the function take 1 argument , here faces . which will be assign to 'limit' in the function.
     total = randNumber(faces);
-
+    
+    //set face to rolled number at corresponding index.
     dice[total].face = total;
-    //Check if this position of the array(corresponding to a face)not null.
+    //one-line if. Condition ? expression1(todo_if) : expression2(todo_else).
+    //if dice[total].face is not null => dice[total].occurence += 1 . else => dice[total].occurrence = 1.
     dice[total].face ? dice[total].occurrence += 1 : (dice[total].occurrence = 1);
   };
   
-   //For loop that will print the occurence of each face . i++ to print each position in the array.
+   //For loop that will print the face, occurence, and percentage of each face . i++ to print each position in the array.
   printf("\nFace \t Count \t Occurence \n");
   for (int i=1; i<=faces; i++)
     printf("%d \t %d \t %.2f%%\n", i, dice[i].occurrence, dice[i].occurrence/(float)throws*100);
@@ -102,8 +108,7 @@ int main(void) {
 	
   int i=0;
   //check for the position of the median value in the array.
-  while (median < (throws/2+1)) 
-  {
+  while (median < (throws/2+1)) {
     median += dice[i].occurrence;
     ++i;
   };
@@ -116,11 +121,12 @@ int main(void) {
     }
   }
   //printing the results.
-  printf("Mean: %.2f\nMedian: %d\nMode: %d", mean/(float)throws, dice[i-1].face, higher);
+  printf("--Statistics--\nMean: %.2f\nMedian: %d\nMode: %d", mean/(float)throws, dice[i-1].face,higher);
   
     
-  //delete the effect of 'malloc' we used before because we dont need to allocated memory anymore.
+  //Once we finished with the allocated memory (malloc), we have to free it back.
   free(dice);
+  
 
   return 0;
 }
