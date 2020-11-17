@@ -47,26 +47,31 @@ int main(void) {
   // Veryfying that input is respecting the rules. Dice must be between the range and will loop until the conditions are met.
   // Using atoi function to convert character string to integer;
   printf("========== Faces ===========\n");
-  printf("Enter number of faces (1-24): ");
+  printf("Enter number of faces (2-24): ");
   fgets(faces, SIZE, stdin);
   validateInteger(faces); // Passing faces or throws as parameter to check if user input is of type integer
 
-  while (atoi(faces) < 1 || atoi(faces) >= 25) {
-    printf("\nNumber of faces should be between 1 and 24. Please re-enter: ");
+  while (atoi(faces) <= 1 || atoi(faces) >= 25) {
+    printf("\nNumber of faces should be between 2 and 24. Please re-enter: ");
     fgets(faces, SIZE, stdin); // Read the line and store it in the buffer pointed by faces or throws and stops the read after newline character
     validateInteger(faces);
   }
 
+  printf("%d faces are expected \n", atoi(faces));
+
   printf("\n========== Throws ===========\n");
-  printf("Enter number of throws (1-499): ");
+  printf("Enter number of throws (2-499): ");
   fgets(throws, SIZE, stdin);
   validateInteger(throws);
   
-  while (atoi(throws) < 1 || atoi(throws) >= 500) {
-    printf("\nNumber of throws should be between 1 and 499. Please re-enter: ");
+  while (atoi(throws) <= 1 || atoi(throws) >= 500) {
+    getchar(); // read trailing character from the buffer 
+    printf("\nNumber of throws should be between 2 and 499. Please re-enter: ");
     fgets(throws, SIZE, stdin);
     validateInteger(throws);
   }
+
+  printf("%d throws are expected\n", atoi(throws));
 
   // Initializing structure of type Dice and dynamically allocating the array with size throws;
   struct Dice *dice = malloc(atoi(throws) * sizeof(struct Dice));
@@ -87,7 +92,7 @@ int main(void) {
 
   printf("\nFace \t Count \t Occurence \n"); // printing the results 
   for (int i=1; i<=atoi(faces); i++)
-    // Calculating the occurence and typecasting throws to avoid errors.
+    // Calculating the occurrence and typecasting throws to avoid errors.
     printf("%d \t %d \t %.2f%%\n", i, dice[i].occurrence, dice[i].occurrence/(float)atoi(throws)*100);
 
   free(dice); // To prevent memory leak. not useful for this program but it is a good code practice.
