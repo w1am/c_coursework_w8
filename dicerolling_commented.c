@@ -66,9 +66,8 @@ int main(void) {
     printf("\nNumber of throws should be between 1 and 500. Please re-enter: ");
     scanf("%i", &throws);
   };
-  //Same
-  printf("Enter number of throws: ");
-  scanf("%i", &throws);
+  //This Statement show the user that his input have been correctly understood and will be used.
+  printf("%d throws are expected!",throws);
   
   //Struct .malloc for creating a dynamic array returning a pointer of the allocated value. 
   struct Dice *dice = malloc(throws * sizeof(struct Dice));
@@ -96,14 +95,14 @@ int main(void) {
     printf("%d \t %d \t %.2f%%\n", i, dice[i].occurrence, dice[i].occurrence/(float)throws*100);
 	
   //Declaring variable for mean median and mode.
-  int mean=0,median=0,middle=throws/2+1;
+  int mean=0,median=0;
  //looping what multiply each count with the face value and sum everything together.
   for (int i=1; i<=faces; i++)
     mean += dice[i].occurrence*i;
 	
   int i=0;
   //check for the position of the median value in the array.
-  while (median < middle) 
+  while (median < (throws/2+1)) 
   {
     median += dice[i].occurrence;
     ++i;
